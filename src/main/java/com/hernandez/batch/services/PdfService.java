@@ -3,6 +3,8 @@ package com.hernandez.batch.services;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,52 +45,51 @@ public class PdfService {
 
 	public List<Archivo> listarArchivos() {
 
-		List<Archivo> datos = new ArrayList<>(); 
+		List<Archivo> datos = new ArrayList<>();
+
+		Path rootPath = Paths.get("pdf");
+
+		Path rootAbsolutPath = rootPath.toAbsolutePath();
+		// Carpeta del usuario
 	
-		 //Carpeta del usuario
-	    String sCarpAct = System.getProperty("user.dir");
-	    System.out.println("Carpeta del usuario = " + sCarpAct);
+		System.out.println("Carpeta del usuario = " + rootAbsolutPath);
 
-	    File carpeta = new File(sCarpAct);
-	  
+		File carpeta = new File(rootAbsolutPath.toString());
 
+		File[] archivos = carpeta.listFiles();
 
-	    File[] archivos = carpeta.listFiles();
-	    
-	    
-	    //Se pueden filtrar los resultados tanto usando list() como usando listFiles()
-	    //Por ejemplo, en este segundo caso para mostrar solo archivos y no carpetas
-	    System.out.println(ANSI_RED + "//// LISTADO CON FILTRO APLICADO - SOLO ARCHIVOS" + ANSI_RESET);
+		// Se pueden filtrar los resultados tanto usando list() como usando listFiles()
+		// Por ejemplo, en este segundo caso para mostrar solo archivos y no carpetas
+		System.out.println(ANSI_RED + "//// LISTADO CON FILTRO APLICADO - SOLO ARCHIVOS" + ANSI_RESET);
 
-	    FileFilter filtro = new FileFilter() {
-	      @Override
-	      public boolean accept(File arch) {
-	        return arch.isFile();
-	      }
-	    };
+		FileFilter filtro = new FileFilter() {
+			@Override
+			public boolean accept(File arch) {
+				return arch.isFile();
+			}
+		};
 
-	    archivos = carpeta.listFiles(filtro);
+		archivos = carpeta.listFiles(filtro);
 
-	    if (archivos == null || archivos.length == 0) {
-	      System.out.println("No hay elementos dentro de la carpeta actual");
-	      return datos;
-	    }
-	    else {
-	      SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	      for (int i=0; i< archivos.length; i++) {
-	        File archivo = archivos[i];
-	        Archivo dato = new Archivo(); 
-	        dato.setNombre(archivo.getName());
-	        dato.setRuta(archivo.getPath());
-	        dato.setPeso(archivo.length());
-	        dato.setTipo(archivo.isDirectory() ? "Carpeta" : "Archivo");
-	        dato.setFecha(sdf.format(archivo.lastModified()));
-	        datos.add(dato);
-	        System.out.println(datos);
-	      }
-	    }
+		if (archivos == null || archivos.length == 0) {
+			System.out.println("No hay elementos dentro de la carpeta actual");
+			return datos;
+		} else {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			for (int i = 0; i < archivos.length; i++) {
+				File archivo = archivos[i];
+				Archivo dato = new Archivo();
+				dato.setNombre(archivo.getName());
+				dato.setRuta(archivo.getPath());
+				dato.setPeso(archivo.length());
+				dato.setTipo(archivo.isDirectory() ? "Carpeta" : "Archivo");
+				dato.setFecha(sdf.format(archivo.lastModified()));
+				datos.add(dato);
+				System.out.println(datos);
+			}
+		}
 		return datos;
 
-	  }
-	
+	}
+
 }
