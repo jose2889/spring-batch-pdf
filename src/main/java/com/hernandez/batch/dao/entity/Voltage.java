@@ -1,6 +1,7 @@
 package com.hernandez.batch.dao.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Voltage {
@@ -10,9 +11,11 @@ public class Voltage {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	@NotNull
 	@Column(name = "nombre")
 	private String nombre;
 
+	@NotNull
 	@Column(name = "apellido")
 	private String apellido;
 

@@ -14,9 +14,6 @@ import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,20 +31,14 @@ public class VoltageProcessor implements ItemProcessor<Cliente, Voltage> {
 		// se genera un pdf
 		Document document = new Document();
 
-		String uniqueFilename = UUID.randomUUID().toString() + "_" + cliente.getNombre() + ".pdf";
-		Path rootPath = Paths.get("pdf").resolve(uniqueFilename);
-
-		Path rootAbsolutPath = rootPath.toAbsolutePath();
-		
-		
 		PdfWriter writer = PdfWriter.getInstance(document,
-				new FileOutputStream(rootAbsolutPath.toString()));
+				new FileOutputStream("EstadoDeCuenta" + cliente.getNombre() + ".pdf"));
 		writer.setEncryption(admin.getBytes(), user.getBytes(), PdfWriter.ALLOW_PRINTING, PdfWriter.ENCRYPTION_AES_128);
 		PdfPTable table = new PdfPTable(3);
 		Font font = new Font(Font.HELVETICA, 12, Font.BOLDITALIC);
 		final Voltage processedVoltage = new Voltage(); 
 		try {
-			  Image image = Image.getInstance("multihogar.jpg");
+			  Image image = Image.getInstance("descarga.png");
 			  PdfPCell cell = new PdfPCell();
 				cell.setBackgroundColor(new Color(184, 218, 255));
 				cell.setPhrase(new Phrase("Nombre", font));
@@ -75,7 +66,7 @@ public class VoltageProcessor implements ItemProcessor<Cliente, Voltage> {
 				processedVoltage.setNombre(nombre);
 				processedVoltage.setApellido(apellido);
 		} catch (Exception e) {
-			// TODO: handle exception
+			log.info("OCURRIO UN ERROR EN EL PROCESO DE CREAR EL PDF",e);
 		}
 		
 		

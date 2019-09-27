@@ -32,19 +32,31 @@ public class BatchConfiguration {
 	@Autowired
 	public StepBuilderFactory stepBuilderFactory;
 
-	private static final String QUERY = "SELECT id, nombre, apellido, email FROM clientes ";
-
-	@Bean
-	public ItemReader<Cliente> reader(DataSource dataSource) {
-		JdbcCursorItemReader<Cliente> databaseReader = new JdbcCursorItemReader<>();
-
-		databaseReader.setDataSource(dataSource);
-		databaseReader.setSql(QUERY);
-		databaseReader.setRowMapper(new BeanPropertyRowMapper<>(Cliente.class));
-
-		return databaseReader;
-	}
-
+//	private static final String QUERY = "SELECT id, nombre, apellido, email FROM clientes ";
+//
+//	@Bean
+//	public ItemReader<Cliente> reader(DataSource dataSource) {
+//		JdbcCursorItemReader<Cliente> databaseReader = new JdbcCursorItemReader<>();
+//
+//		databaseReader.setDataSource(dataSource);
+//		databaseReader.setSql(QUERY);
+//		databaseReader.setRowMapper(new BeanPropertyRowMapper<>(Cliente.class));
+//
+//		return databaseReader;
+//	}
+	 private static final String QUERY_FIND_STUDENTS =
+	            "SELECT id, nombre, apellido, email FROM clientes ";
+	 
+	    @Bean
+	    ItemReader<Cliente> databaseXmlItemReader(DataSource dataSource) {
+	        JdbcCursorItemReader<Cliente> databaseReader = new JdbcCursorItemReader<>();
+	 
+	        databaseReader.setDataSource(dataSource);
+	        databaseReader.setSql(QUERY_FIND_STUDENTS);
+	        databaseReader.setRowMapper(new BeanPropertyRowMapper<>(Cliente.class));
+	 
+	        return databaseReader;
+	    }
 //    @Bean
 //    public VoltageProcessor processor() {
 //        return new VoltageProcessor();
@@ -70,9 +82,9 @@ public class BatchConfiguration {
 	}
 
 	@Bean
-	public Step step1(JdbcBatchItemWriter<Voltage> writer, ItemReader<Cliente> reader,
+	public Step step1(JdbcBatchItemWriter<Voltage> writer, ItemReader<Cliente> databaseXmlItemReader,
 			ItemProcessor<Cliente, Voltage> processor) {
-		return stepBuilderFactory.get("step1").<Cliente, Voltage>chunk(10).reader(reader).processor(processor)
+		return stepBuilderFactory.get("step1").<Cliente, Voltage>chunk(10).reader(databaseXmlItemReader).processor(processor)
 				.writer(writer).build();
 	}
 }
